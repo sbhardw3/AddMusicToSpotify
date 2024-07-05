@@ -1,10 +1,13 @@
-import os
 from youtube import Youtube
 from spotify import SpotifyClient
+from getToken import get_token
+
+token = get_token()
+
 
 def run():
-    youtube_client = Youtube('./creds/client_secret.json')
-    spotify_client = SpotifyClient(os.getenv("SPOTIFY_AUTH_TOKEN"))
+    youtube_client = Youtube('D:\SpotifyAutomation\creds\client_secret.json')
+    spotify_client = SpotifyClient(token)
     playlists = youtube_client.get_playlist()
 
 
@@ -17,7 +20,7 @@ def run():
 
 
     songs = youtube_client.get_videos_from_playlist(chosen_playlist.id)
-    print(f"Attempting to add {len(song)}")
+    print(f"Attempting to add {len(songs)}")
 
     for song in songs:
         spotify_song_id = spotify_client.search_song(song.artist, song.track)
@@ -25,3 +28,7 @@ def run():
             added_song = spotify_client.add_song(spotify_song_id)
             if added_song:
                 print(f"Added {song.artist}")
+
+
+
+run()
