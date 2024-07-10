@@ -1,4 +1,5 @@
 import os
+import re
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 import googleapiclient.errors
@@ -35,6 +36,7 @@ class Youtube(object):
         youtube = googleapiclient.discovery.build(
             api_service_name, api_version, credentials=credentials)
         
+        
         self.youtube = youtube
       
     #Here youtube client has a function called playlists.list() thorugh which 
@@ -51,6 +53,8 @@ class Youtube(object):
         playlists = [Playlist(item["id"], item["snippet"]["title"]) for item in response['items']]
 
         return playlists
+    
+
 
     def get_videos_from_playlist(self, playlist_id):
 
@@ -58,13 +62,16 @@ class Youtube(object):
         request = self.youtube.playlistItems().list(
 
             playlistId = playlist_id,
-            part = "id, snippet"
+            part = "snippet"
         )
 
+         
         response = request.execute()
 
         for item in response['items']:
             video_id = item["snippet"]["resourceId"]["videoId"]
+            
+
             artist, track = self.get_artist_and_track(video_id)
 
             if artist and track:
@@ -77,11 +84,32 @@ class Youtube(object):
     def get_artist_and_track(self, video_id):
         youtube_url = f"https://www.youtube.com/watch?v={video_id}"
 
-        video = youtube_dl.YoutubeDL({'quiet': True}).extract_info(youtube_url, download=False)
+        video_info = youtube_dl.YoutubeDL({'quiet': True}).extract_info(youtube_url, download=False)
 
-        artist = video["artist"]
-        track = video["track"]
+        title = video_info.get("title")
+
+        artist, track = self.extract_artist_and_track(title)
+
+        #print(f"Video info for {video_id}: {video_info.get("title")}")
 
         return artist, track
+    
+    def extract_artist_and_track(self, title):
+        patterns = [
+            r'^(?P<artist>.+) - (?P<track>.+)',  # "Artist - Track"
+            r'^(?P<track>.+) - (?P<artist>.+)',  # "Track - Artist"
+            r'^(?P<artist>.+) \| (?P<track>.+)', # "Artist | Track"
+            r'^(?P<track>.+) \| (?P<artist>.+)'  # "Track | Artist"
+        ]
 
+        for pattern in patterns:
+            match = re.match(pattern, title)
+            if match:
+                artist = match.group('artist').strip()
+                track = match.group('track').strip()
+                return artist, track
+        
+        return None, None #If no pattern matches 
+
+        
 
