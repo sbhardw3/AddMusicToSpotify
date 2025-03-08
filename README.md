@@ -4,6 +4,7 @@ This project allows you to automatically transfer your YouTube playlists to Spot
 
 <h3>Prerequisites</h3>
 1. Python 3.7 or higher
+
 2. Google API credentials- <ul><li> create a project in Google Cloud Console/ mainly Youtube world</li>
                                <li> Enable Youtube Data API for this project</li>
                                <li> ownload the client_secret.json file and place it in the creds folder or you can make that adjustment yourself</li>
