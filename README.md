@@ -5,15 +5,15 @@ This project allows you to automatically transfer your YouTube playlists to Spot
 <h3>Prerequisites</h3>
 1. Python 3.7 or higher
 
-2. Google API credentials- a) create a project in Google Cloud Console/ mainly Youtube world
-   
-                           b) Enable Youtube Data API for this project
-   
-                           c) Download the client_secret.json file and place it in the creds folder or you can make that adjustment yourself
+2. Google API credentials- <ul><li> create a project in Google Cloud Console/ mainly Youtube world</li>
+                               <li> Enable Youtube Data API for this project</li>
+                               <li> ownload the client_secret.json file and place it in the creds folder or you can make that adjustment yourself</li>
+                               </ul>
 
- 4. Spotify Developer Account - a) Create a Spotify Developer Account and register your application to get your CLIENT_ID and CLIENT_SECRET
+ 4. Spotify Developer Account - <ul><li> Create a Spotify Developer Account and register your application to get your CLIENT_ID and CLIENT_SECRET</li>
     
-                                b) Add https://localhost:8080/callback as a redirect URI in the Spotify Developer Dashboard
+                                     <li> Add https://localhost:8080/callback as a redirect URI in the Spotify Developer Dashboard </li>
+                                 </ul>
 
 6. Required Python packages (you can use this command and also check packages --- pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client youtube_dl requests python-dotenv
 
