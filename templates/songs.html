@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Songs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Songs in Playlist</h1>
+
+    <table class="song-table">
+        <thead>
+            <tr>
+                <th>Artist</th>
+                <th>Track</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in songs %}
+            <tr>
+                <td>{{ song.artist }}</td>
+                <td>{{ song.track }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="buttons">
+        <form action="/transfer_playlist" method="post" style="display:inline;">
+            <input type="hidden" name="playlist_id" value="{{ playlist_id }}">
+            <button type="submit" class="playlist-btn">Transfer Songs</button>
+        </form>
+
+        <a href="/" class="playlist-btn back-btn">Back to Home</a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transfer Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Transfer Results</h1>
+
+    <table class="song-table">
+        <thead>
+            <tr>
+                <th>Artist</th>
+                <th>Track</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.artist }}</td>
+                <td>{{ result.track }}</td>
+                <td>{{ result.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="buttons">
+        <a href="/" class="playlist-btn back-btn">Back to Home</a>
+    </div>
+</div>
+</body>
+</html>

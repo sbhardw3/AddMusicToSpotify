@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube → Spotify Transfer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>🎵 YouTube → Spotify Playlist Transfer</h1>
+    <p>Select a playlist to transfer</p>
+
+    <div class="playlist-list">
+        {% for playlist in playlists %}
+            <form method="POST" action="/select_playlist" class="playlist-card">
+                <input type="hidden" name="playlist_id" value="{{ playlist.id }}">
+                <button class="playlist-btn">{{ playlist.title }}</button>
+            </form>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

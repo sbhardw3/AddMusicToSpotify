@@ -1,0 +1,72 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+    margin: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    text-align: center;
+    padding-top: 60px;
+}
+
+h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+p {
+    margin-bottom: 30px;
+    font-size: 18px;
+}
+
+.playlist-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.playlist-card {
+    flex: 1 1 45%;
+    max-width: 350px;
+}
+
+.playlist-btn, .back-btn {
+    background: #1DB954;
+    border: none;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+    width: 100%;
+    transition: 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.playlist-btn:hover, .back-btn:hover {
+    background: #1ed760;
+    transform: scale(1.03);
+}
+
+.song-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.song-table th, .song-table td {
+    border: 1px solid #333;
+    padding: 10px;
+    text-align: left;
+}
+
+.song-table th {
+    background: #1DB954;
+    color: white;
+}
