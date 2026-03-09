@@ -1,21 +1,29 @@
-<h1>Spotify Automation Project</h1>
+# 🎵 YouTube → Spotify Playlist Transfer
 
-This project allows you to automatically transfer your YouTube playlists to Spotify. It uses the YouTube Data API to fetch your playlists and songs, and the Spotify Web API to search for and add those songs to your Spotify library.
+A Python-based tool that allows you to transfer your YouTube playlists to Spotify. It uses **Flask** for a web interface and integrates the **YouTube Data API** and **Spotify Web API**.
 
-<h3>Prerequisites</h3>
-1. Python 3.7 or higher
+---
 
-2. Google API credentials- <ul><li> create a project in Google Cloud Console/ mainly Youtube world</li>
-                               <li> Enable Youtube Data API for this project</li>
-                               <li> ownload the client_secret.json file and place it in the creds folder or you can make that adjustment yourself</li>
-                               </ul>
+## **Features**
 
-3. Spotify Developer Account - <ul><li> Create a Spotify Developer Account and register your application to get your CLIENT_ID and CLIENT_SECRET</li>
-                                    <li> Add https://localhost:8080/callback as a redirect URI in the Spotify Developer Dashboard</li>
-                                 </ul>
+- Authenticate with Spotify and YouTube securely
+- View your YouTube playlists directly in a web interface
+- Select a playlist and view all songs
+- Transfer songs to your Spotify library
+- Clean YouTube video titles automatically for accurate Spotify searches
 
-4. Required Python packages (you can use this command and also check packages --- pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client youtube_dl requests python-dotenv
+---
 
-<h3>You can contribute as well to make improvements and suggest or make changes as well </h3>
+## **Prerequisites**
 
-
+1. **Python 3.11+** (tested on Python 3.13)  
+2. **Spotify Developer Account**  
+   - [Create an app](https://developer.spotify.com/dashboard/applications)  
+   - Add redirect URI: `http://127.0.0.1:5000/callback`  
+3. **Google Developer Account**  
+   - [Create OAuth client](https://console.developers.google.com/)  
+   - Enable YouTube Data API v3  
+   - Download `client_secret.json`  
+4. Install required Python packages:
+```bash
+pip install -r requirements.txt
