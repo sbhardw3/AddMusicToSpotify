@@ -11,16 +11,14 @@
     <table class="song-table">
         <thead>
             <tr>
-                <th>Artist</th>
-                <th>Track</th>
+                <th>Youtube Title</th>
                 <th>Status</th>
             </tr>
         </thead>
         <tbody>
             {% for result in results %}
             <tr>
-                <td>{{ result.artist }}</td>
-                <td>{{ result.track }}</td>
+                <td>{{ result.title}}</td>
                 <td>{{ result.status }}</td>
             </tr>
             {% endfor %}

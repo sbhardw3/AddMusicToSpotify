@@ -1,46 +1,56 @@
 import requests
 import urllib.parse
+from rapidfuzz import fuzz
 
 
 class SpotifyClient(object):
     def __init__(self, api_token):
         self.api_token = api_token
 
-    def search_song(self,artist,track):
+    def search_song(self, title):
+
         try:
-            track = track.split("[")[0].strip()
 
+            query = urllib.parse.quote(title)
 
-            query = urllib.parse.quote(f"{artist}{track}")
-            url = f"http://api.spotify.com/v1/search?q={query}&type=track"
+            url = f"https://api.spotify.com/v1/search?q={query}&type=track&limit=10"
 
-            #print(f"Searching: {url}")
-
-            
-            headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_token}"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.api_token}"
             }
-            
+
             response = requests.get(url, headers=headers)
             response.raise_for_status()
 
-            response_json = response.json()
-            
+            results = response.json().get("tracks", {}).get("items", [])
 
-            results = response_json.get("tracks", {}).get("items", [])
-            if results:
-                #let's assume the first track in the list is the song we want
-                return results[0]['id']
-            else:
-                raise Exception(f"No song found for {artist} = {track}")
-            
-        except requests.exceptions.RequestException as e:
-            print (f"Error searching song: {e}")
+            best_score = 0
+            best_track_id = None
+
+            for item in results:
+
+                spotify_track = item["name"]
+                spotify_artist = item["artists"][0]["name"]
+
+                combined_spotify = f"{spotify_track} {spotify_artist}"
+
+                score = fuzz.token_set_ratio(
+                    title.lower(),
+                    combined_spotify.lower()
+                )
+
+                if score > best_score:
+                    best_score = score
+                    best_track_id = item["id"]
+
+            if best_score > 60:
+                return best_track_id
+
             return None
-        
-        except (KeyError, ValueError) as r:
-            print(f"Error parsing JSON response: {r}")
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error searching song: {e}")
             return None
             
 

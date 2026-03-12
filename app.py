@@ -81,13 +81,13 @@ def transfer_playlist():
     songs = youtube_client.get_videos_from_playlist(playlist_id)
     results = []
     for song in songs:
-        spotify_id = spotify_client.search_song(song.artist, song.track)
+        spotify_id = spotify_client.search_song(song.title)
         if spotify_id:
             added = spotify_client.add_song(spotify_id)
             status = "Added" if added else "Failed"
         else:
             status = "Not found on Spotify"
-        results.append({"artist": song.artist, "track": song.track, "status": status})
+        results.append({"title": song.title, "status": status})
     return render_template("transfer_result.html", results=results)
 
 if __name__ == "__main__":

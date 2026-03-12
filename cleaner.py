@@ -7,6 +7,10 @@ REMOVE_PATTERNS = [
     r"lyrics",
     r"remastered",
     r"audio",
+    r"new punjabi songs?",
+    r"punjabi songs? \d{4}",
+    r"official song",
+
 ]
 
 def clean_title(title: str) -> str:

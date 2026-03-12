@@ -14,9 +14,8 @@ class Playlist(object):
         self.title = title 
 
 class Song(object):
-    def __init__(self, artist, track):
-        self.artist = artist
-        self.track = track
+    def __init__(self, title):
+        self.title = title
 
 class Youtube(object):
    #This part of the code was picked from the Youtube API!!!
@@ -70,28 +69,16 @@ class Youtube(object):
 
         for item in response['items']:
             video_id = item["snippet"]["resourceId"]["videoId"]
-            
 
-            artist, track = self.get_artist_and_track(video_id)
+            title = self.get_video_title(video_id)
 
-            if artist and track:
-                songs.append(Song(artist, track))
+            if title:
+                songs.append(Song(title))
             else:
                 print("Skipped:", video_id)
-        artist, track = self.get_artist_and_track(video_id)
-
-        if not artist or not track:
-            title = youtube_dl.YoutubeDL({'quiet': True}).extract_info(
-                f"https://www.youtube.com/watch?v={video_id}", download=False
-            ).get("title")
-
-            artist = "Unknown"
-            track = title
-
-        songs.append(Song(artist, track))
 
         return songs
-
+    
 
 
     def get_artist_and_track(self, video_id):
@@ -107,22 +94,52 @@ class Youtube(object):
         #print(f"Video info for {video_id}: {video_info.get("title")}")
 
         return artist, track
-    
-    def extract_artist_and_track(self, title):
-        patterns = [
-            r'^(?P<artist>.+) - (?P<track>.+)',  # "Artist - Track"
-            r'^(?P<track>.+) - (?P<artist>.+)',  # "Track - Artist"
-            r'^(?P<artist>.+) \| (?P<track>.+)', # "Artist | Track"
-            r'^(?P<track>.+) \| (?P<artist>.+)'  # "Track | Artist"
-        ]
 
-        for pattern in patterns:
-            match = re.match(pattern, title)
-            if match:
-                artist = match.group('artist').strip()
-                track = match.group('track').strip()
-                return artist, track
+    def get_video_title(self, video_id):
+
+        youtube_url = f"https://www.youtube.com/watch?v={video_id}"
+
+        video_info = youtube_dl.YoutubeDL({'quiet': True}).extract_info(
+            youtube_url,
+            download=False
+        )
+
+        title = video_info.get("title")
+
+        if not title:
+            return None
+
+        title = clean_title(title)
+
+        return title
         
+    def extract_artist_and_track(self, title):
+
+        title = title.lower()
+
+        # normalize separators
+        separators = ["|", "-", "—", "–"]
+
+        for sep in separators:
+            if sep in title:
+                parts = [p.strip() for p in title.split(sep)]
+
+                # Example: 295 | sidhu moose wala | the kidd
+                if len(parts) >= 2:
+                    track = parts[0]
+                    artist = parts[1]
+
+                    return artist, track
+
+        # fallback heuristic
+        words = title.split()
+
+        # if title begins with a number like "295"
+        if words and words[0].isdigit():
+            track = words[0]
+            artist = " ".join(words[1:3])  # guess first two words as artist
+            return artist, track
+
         return None, None #If no pattern matches 
 
         
