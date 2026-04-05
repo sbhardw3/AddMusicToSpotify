@@ -77,5 +77,23 @@ class SpotifyClient(object):
         except requests.exceptions.RequestException as e:
             print(f"Error adding song: {e}")
             return False
-    
+    def create_playlist(self, user_id, playlist_name):
+    url = f"https://api.spotify.com/v1/users/{user_id}/playlists"
+
+    response = requests.post(
+        url,
+        json={
+            "name": playlist_name,
+            "description": "Created from YouTube playlist",
+            "public": False
+        },
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_token}"
+        }
+    )
+
+    response.raise_for_status()
+
+    return response.json()["id"]
     
