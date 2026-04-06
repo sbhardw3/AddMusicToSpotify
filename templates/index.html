@@ -5,18 +5,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<div id="loading-overlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+    <p id="loading-text">Loading playlist...</p>
+</div>
+
 <div class="container">
     <h1>🎵 YouTube → Spotify Playlist Transfer</h1>
     <p>Select a playlist to transfer</p>
 
     <div class="playlist-list">
         {% for playlist in playlists %}
-            <form method="POST" action="/select_playlist" class="playlist-card">
+            <form method="POST" action="/select_playlist" class="playlist-card playlist-form">
                 <input type="hidden" name="playlist_id" value="{{ playlist.id }}">
-                <button class="playlist-btn">{{ playlist.title }}</button>
+                <button type="submit" class="playlist-btn">{{ playlist.title }}</button>
             </form>
         {% endfor %}
     </div>
 </div>
+
+<script>
+    const playlistForms = document.querySelectorAll(".playlist-form");
+    const overlay = document.getElementById("loading-overlay");
+    const loadingText = document.getElementById("loading-text");
+
+    playlistForms.forEach(form => {
+        form.addEventListener("submit", function() {
+            overlay.classList.remove("hidden");
+            loadingText.textContent = "Loading playlist songs...";
+            const button = form.querySelector("button");
+            button.disabled = true;
+            button.textContent = "Loading...";
+        });
+    });
+</script>
 </body>
 </html>

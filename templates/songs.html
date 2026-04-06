@@ -5,13 +5,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<div id="loading-overlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+    <p id="loading-text">Transferring songs...</p>
+</div>
+
 <div class="container">
     <h1>Songs in Playlist</h1>
+
+    <div class="summary-bar">
+        <div class="summary-card">
+            <span class="summary-number">{{ songs|length }}</span>
+            <span class="summary-label">Songs Found</span>
+        </div>
+    </div>
 
     <table class="song-table">
         <thead>
             <tr>
-                <th>Youtube Title</th>
+                <th>YouTube Title</th>
             </tr>
         </thead>
         <tbody>
@@ -24,7 +36,7 @@
     </table>
 
     <div class="buttons">
-        <form action="/transfer_playlist" method="post" style="display:inline;">
+        <form action="/transfer_playlist" method="post" class="transfer-form" style="display:inline;">
             <input type="hidden" name="playlist_id" value="{{ playlist_id }}">
             <button type="submit" class="playlist-btn">Transfer Songs</button>
         </form>
@@ -32,5 +44,21 @@
         <a href="/" class="playlist-btn back-btn">Back to Home</a>
     </div>
 </div>
+
+<script>
+    const transferForm = document.querySelector(".transfer-form");
+    const overlay = document.getElementById("loading-overlay");
+    const loadingText = document.getElementById("loading-text");
+
+    if (transferForm) {
+        transferForm.addEventListener("submit", function() {
+            overlay.classList.remove("hidden");
+            loadingText.textContent = "Matching songs and creating playlist...";
+            const button = transferForm.querySelector("button");
+            button.disabled = true;
+            button.textContent = "Transferring...";
+        });
+    }
+</script>
 </body>
 </html>
