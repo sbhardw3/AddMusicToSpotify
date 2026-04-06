@@ -45,7 +45,8 @@ def login_spotify():
     url = (
         f"https://accounts.spotify.com/authorize?"
         f"response_type=code&client_id={CLIENT_ID}"
-        f"&scope=user-library-modify&redirect_uri={encoded_redirect}"
+        f"&scope=playlist-modify-private playlist-modify-public"
+        f"&redirect_uri={encoded_redirect}"
     )
     return redirect(url)
 
@@ -74,20 +75,36 @@ def select_playlist():
     songs = youtube_client.get_videos_from_playlist(playlist_id)
     return render_template("songs.html", songs=songs, playlist_id=playlist_id)
 
+def get_playlist_name_by_id(playlist_id):
+    for playlist in playlists:
+        if playlist.id == playlist_id:
+            return playlist.title
+    return "Transferred YouTube Playlist"
+
+
 # --- Transfer songs ---
 @app.route("/transfer_playlist", methods=["POST"])
 def transfer_playlist():
     playlist_id = request.form["playlist_id"]
     songs = youtube_client.get_videos_from_playlist(playlist_id)
+
+    playlist_name = "Transferred Youtube Playlist"
+    user_id = spotify_client.get_user_id()
+    spotify_playlist_id = spotify_client.create_playlist(user_id, playlist_name)
+
     results = []
+
     for song in songs:
         spotify_id = spotify_client.search_song(song.title)
+
         if spotify_id:
-            added = spotify_client.add_song(spotify_id)
+            added = spotify_client.add_song(spotify_playlist_id, spotify_id)
             status = "Added" if added else "Failed"
         else:
             status = "Not found on Spotify"
+
         results.append({"title": song.title, "status": status})
+
     return render_template("transfer_result.html", results=results)
 
 if __name__ == "__main__":
