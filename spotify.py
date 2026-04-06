@@ -81,7 +81,7 @@ class SpotifyClient(object):
             print(f"Error searching song: {e}")
             return None
 
-    def add_song_to_playlist(self, playlist_id, song_id):
+    def add_song(self, playlist_id, song_id):
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
 
         response = requests.post(
