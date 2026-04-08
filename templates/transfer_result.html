@@ -8,6 +8,16 @@
 <div class="container">
     <h1>Transfer Results</h1>
 
+    <p>
+        Spotify playlist:
+        <strong>{{ playlist_name }}</strong>
+        {% if playlist_created %}
+            (created)
+        {% else %}
+            (synced with existing playlist)
+        {% endif %}
+    </p>
+
     <div class="summary-bar">
         <div class="summary-card">
             <span class="summary-number">{{ results|length }}</span>
@@ -21,9 +31,15 @@
         </div>
         <div class="summary-card">
             <span class="summary-number">
-                {{ results | rejectattr("status", "equalto", "Added") | list | length }}
+                {{ results | selectattr("status", "equalto", "Already in playlist") | list | length }}
             </span>
-            <span class="summary-label">Not Added</span>
+            <span class="summary-label">Already Present</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-number">
+                {{ results | selectattr("status", "equalto", "Not found on Spotify") | list | length }}
+            </span>
+            <span class="summary-label">Not Found</span>
         </div>
     </div>
 
@@ -38,7 +54,15 @@
             {% for result in results %}
             <tr>
                 <td>{{ result.title }}</td>
-                <td class="{% if result.status == 'Added' %}status-added{% else %}status-failed{% endif %}">
+                <td class="
+                    {% if result.status == 'Added' %}
+                        status-added
+                    {% elif result.status == 'Already in playlist' %}
+                        status-skipped
+                    {% else %}
+                        status-failed
+                    {% endif %}
+                ">
                     {{ result.status }}
                 </td>
             </tr>

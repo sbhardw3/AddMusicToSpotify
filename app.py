@@ -45,7 +45,7 @@ def login_spotify():
     url = (
         f"https://accounts.spotify.com/authorize?"
         f"response_type=code&client_id={CLIENT_ID}"
-        f"&scope=playlist-modify-private playlist-modify-public"
+        f"&scope=playlist-read-private playlist-modify-private playlist-modify-public"
         f"&redirect_uri={encoded_redirect}"
     )
     return redirect(url)
@@ -88,9 +88,21 @@ def transfer_playlist():
     playlist_id = request.form["playlist_id"]
     songs = youtube_client.get_videos_from_playlist(playlist_id)
 
-    playlist_name = "Transferred Youtube Playlist"
-    user_id = spotify_client.get_user_id()
-    spotify_playlist_id = spotify_client.create_playlist(user_id, playlist_name)
+    playlist_name = get_playlist_name_by_id(playlist_id)
+
+    # Try to find existing Spotify playlist first
+    spotify_playlist_id = spotify_client.find_playlist_by_name(playlist_name)
+
+    playlist_created = False
+
+    # If not found, create a new one
+    if not spotify_playlist_id:
+        user_id = spotify_client.get_user_id()
+        spotify_playlist_id = spotify_client.create_playlist(user_id, playlist_name)
+        playlist_created = True
+
+    # Get all existing songs in that Spotify playlist
+    existing_track_ids = spotify_client.get_playlist_track_ids(spotify_playlist_id)
 
     results = []
 
@@ -98,14 +110,29 @@ def transfer_playlist():
         spotify_id = spotify_client.search_song(song.title)
 
         if spotify_id:
-            added = spotify_client.add_song(spotify_playlist_id, spotify_id)
-            status = "Added" if added else "Failed"
+            if spotify_id in existing_track_ids:
+                status = "Already in playlist"
+            else:
+                added = spotify_client.add_song_to_playlist(spotify_playlist_id, spotify_id)
+                if added:
+                    status = "Added"
+                    existing_track_ids.add(spotify_id)
+                else:
+                    status = "Failed"
         else:
             status = "Not found on Spotify"
 
-        results.append({"title": song.title, "status": status})
+        results.append({
+            "title": song.title,
+            "status": status
+        })
 
-    return render_template("transfer_result.html", results=results)
+    return render_template(
+        "transfer_result.html",
+        results=results,
+        playlist_name=playlist_name,
+        playlist_created=playlist_created
+    )
 
 if __name__ == "__main__":
     app.run(debug=True)

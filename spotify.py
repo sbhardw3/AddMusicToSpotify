@@ -101,3 +101,58 @@ class SpotifyClient(object):
         response.raise_for_status()
 
         return response.ok
+    
+    def get_user_playlists(self):
+        url = "https://api.spotify.com/v1/me/playlists"
+
+        headers = {
+            "Authorization": f"Bearer {self.api_token}"
+        }
+
+        playlists = []
+
+        while url:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+
+            data = response.json()
+            playlists.extend(data.get("items", []))
+            url = data.get("next")
+
+        return playlists
+
+
+    def find_playlist_by_name(self, playlist_name):
+        playlists = self.get_user_playlists()
+
+        for playlist in playlists:
+            if playlist["name"].strip().lower() == playlist_name.strip().lower():
+                return playlist["id"]
+
+        return None
+    
+    def get_playlist_track_ids(self, playlist_id):
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+
+        headers = {
+            "Authorization": f"Bearer {self.api_token}"
+        }
+
+        track_ids = []
+
+        while url:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+
+            data = response.json()
+
+            items = data.get("items", [])
+
+            for item in items:
+                track = item.get("track")
+                if track and track.get("id"):
+                    track_ids.append(track["id"])
+
+            url = data.get("next")
+
+        return set(track_ids)

@@ -183,6 +183,11 @@ p {
     margin: 0;
 }
 
+.status-skipped {
+    color: #f5c542;
+    font-weight: bold;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
