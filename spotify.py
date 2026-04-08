@@ -39,6 +39,30 @@ class SpotifyClient(object):
 
         return response.json()["id"]
 
+    def choose_best_match(self, youtube_title, results):
+        best_score = 0
+        best_track_id = None
+
+        for item in results:
+            spotify_track = item["name"]
+            spotify_artist = item["artists"][0]["name"]
+
+            combined_spotify = f"{spotify_track} {spotify_artist}"
+
+            score = fuzz.token_set_ratio(
+                youtube_title.lower(),
+                combined_spotify.lower()
+            )
+
+            if score > best_score:
+                best_score = score
+                best_track_id = item["id"]
+
+        if best_score > 60:
+            return best_track_id
+
+        return None
+
     def search_song(self, title):
         try:
             query = urllib.parse.quote(title)
@@ -54,34 +78,13 @@ class SpotifyClient(object):
 
             results = response.json().get("tracks", {}).get("items", [])
 
-            best_score = 0
-            best_track_id = None
-
-            for item in results:
-                spotify_track = item["name"]
-                spotify_artist = item["artists"][0]["name"]
-
-                combined_spotify = f"{spotify_track} {spotify_artist}"
-
-                score = fuzz.token_set_ratio(
-                    title.lower(),
-                    combined_spotify.lower()
-                )
-
-                if score > best_score:
-                    best_score = score
-                    best_track_id = item["id"]
-
-            if best_score > 60:
-                return best_track_id
-
-            return None
+            return self.choose_best_match(title, results)
 
         except requests.exceptions.RequestException as e:
             print(f"Error searching song: {e}")
             return None
 
-    def add_song(self, playlist_id, song_id):
+    def add_song_to_playlist(self, playlist_id, song_id):
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
 
         response = requests.post(

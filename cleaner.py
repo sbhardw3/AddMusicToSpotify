@@ -1,16 +1,18 @@
 import re 
 
 REMOVE_PATTERNS = [
-    r"\(.*?\)",     # remove (Official Video)
-    r"\[.*?\]",     # remove [HD]
+    r"\(.*?\)",
+    r"\[.*?\]",
     r"official video",
+    r"official song",
     r"lyrics",
     r"remastered",
     r"audio",
-    r"new punjabi songs?",
+    r"new punjabi songs? \d{4}",
+    r"latest punjabi songs? \d{4}",
     r"punjabi songs? \d{4}",
-    r"official song",
-
+    r"new punjabi songs?",
+    r"latest punjabi songs?",
 ]
 
 def clean_title(title: str) -> str:
